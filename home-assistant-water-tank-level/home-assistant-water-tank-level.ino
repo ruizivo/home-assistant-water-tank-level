@@ -46,10 +46,40 @@ void loop() {
     server.handleClient();
     ArduinoOTA.handle();
   }
+
+// Water tank lenght in cm
+// water tank width in cm
+
+  //284x150x144 -14
+
+  int sensorHeightWater = 14;
+  int lenght = 284;
+  int width = 150;
+  int height = 130;
+  int fullTank = (lenght * width * height)/1000;
+  int volume = 0;
+  int percent;
   
+  int distance = sensorRead() - sensorHeightWater;
+  if (height < distance || distance < 0) {                                                       //we don't want to display negative values
+      volume = 0;
+      percent = 0;
+  } else {
+      volume = (lenght * width * (height-distance)) / 1000;  
+      percent = ((float) volume / fullTank) * 100;
+  }
 
-  publishData(0,0,sensorRead());
+  // Prints the distance on the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  Serial.print("volume: ");
+  Serial.println(volume);
+  Serial.print("percent: ");
+  Serial.println(percent);
 
+  
+  publishData(volume,percent,distance);
+   delay(2000);
 }
 
 int sensorRead(){
@@ -60,16 +90,12 @@ int sensorRead(){
   digitalWrite(pinTrig, HIGH);
   delayMicroseconds(10);
   digitalWrite(pinTrig, LOW);
-  
+
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration = pulseIn(pinEcho, HIGH);
-  
   // Calculating the distance
   distance= duration*0.034/2;
-  // Prints the distance on the Serial Monitor
-  Serial.print("Distance: ");
-  Serial.println(distance);
-  delay(2000);
+ 
   return distance;
 }
 

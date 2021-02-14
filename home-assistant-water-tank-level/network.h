@@ -17,12 +17,10 @@ extern WiFiClient wifiClient;
 /***************************************************
           MQTT Server Settings
 ***************************************************/
-extern const char* mqtt_server;            //MQTT server ip address
-extern const int mqttPort;                            //MQTT broker port
-
-extern const char* mqttUser;                        //MQTT broker username
-extern const char* mqttPassword;                  //MQTT broker user password
-
+extern const char* mqtt_server;               //MQTT server ip address
+extern const int mqttPort;                    //MQTT broker port
+extern const char* mqttUser;                  //MQTT broker username
+extern const char* mqttPassword;              //MQTT broker user password
 extern char const * waterTankSensorMqtt;
 extern char const * deviceName;
 
