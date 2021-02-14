@@ -6,7 +6,7 @@
 // defines variables
 long duration;
 int distance;
-
+int myArray[10];
 
 
 void configUltrasonicSensor(){
@@ -60,8 +60,9 @@ void loop() {
   int volume = 0;
   int percent;
   
-  int distance = sensorRead() - sensorHeightWater;
+  int distance = precisionSensorRead() - sensorHeightWater;
   if (height < distance || distance < 0) {                                                       //we don't want to display negative values
+      distance = 0;
       volume = 0;
       percent = 0;
   } else {
@@ -70,16 +71,57 @@ void loop() {
   }
 
   // Prints the distance on the Serial Monitor
-  Serial.print("Distance: ");
-  Serial.println(distance);
-  Serial.print("volume: ");
-  Serial.println(volume);
-  Serial.print("percent: ");
-  Serial.println(percent);
+//  Serial.print("Distance: ");
+//  Serial.println(distance);
+//  Serial.print("volume: ");
+//  Serial.println(volume);
+//  Serial.print("percent: ");
+//  Serial.println(percent);
 
   
   publishData(volume,percent,distance);
    delay(2000);
+}
+
+int precisionSensorRead(){
+  
+  for (int i = 0; i < 10; i = i + 1) {
+    myArray[i] = sensorRead();
+    delay(1);
+    //Serial.println(myArray[i]);
+  }
+  int count=0;
+  int bigger = 0;
+  int smaller = 9999999999999;
+  for (int i = 0; i < 10; i = i + 1) {
+    if(myArray[i] > bigger){
+      bigger = myArray[i];
+    }
+    if(myArray[i] < smaller){
+      bigger = myArray[i];
+    }
+  }
+  int sum=0;
+  for (int i = 0; i < 10; i = i + 1) {
+    if(myArray[i] < bigger && myArray[i] > smaller){
+      sum += myArray[i];
+      count++;
+    }
+    
+  }
+  float total;
+  
+  if(sum != 0){
+    total = (float)sum/count;
+  } else{
+    total = myArray[0];
+  }
+  
+//  Serial.print("total: ");
+//  Serial.println(total);
+//  Serial.print("totalR: ");
+//  Serial.println(round(total));
+  return round(total);
 }
 
 int sensorRead(){
@@ -88,7 +130,7 @@ int sensorRead(){
   delayMicroseconds(2);
   // Sets the trigPin on HIGH state for 10 micro seconds
   digitalWrite(pinTrig, HIGH);
-  delayMicroseconds(10);
+  delayMicroseconds(12);
   digitalWrite(pinTrig, LOW);
 
   // Reads the echoPin, returns the sound wave travel time in microseconds
